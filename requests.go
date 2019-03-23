@@ -10,11 +10,16 @@ import (
 )
 
 const contentTypeUrlEncoded = "application/x-www-form-urlencoded"
+const defaultAPIURL = "https://calendly.com/api/v1"
 
 type Api struct {
 	AuthToken string
 	// e.g. https://calendly.com/api/v1
 	BaseUrl string
+}
+
+func New(authToken string) *Api {
+	return &Api{AuthToken:authToken, BaseUrl: defaultAPIURL}
 }
 
 func (a *Api) Echo() (*EchoResponse, error) {
