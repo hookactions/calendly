@@ -10,17 +10,17 @@ import (
 	"strings"
 )
 
-const contentTypeUrlEncoded = "application/x-www-form-urlencoded"
+const contentTypeURLEncoded = "application/x-www-form-urlencoded"
 const defaultAPIURL = "https://calendly.com/api/v1"
 
 type Api struct {
 	AuthToken string
 	// e.g. https://calendly.com/api/v1
-	BaseUrl string
+	BaseURL string
 }
 
 func New(authToken string) *Api {
-	return &Api{AuthToken: authToken, BaseUrl: defaultAPIURL}
+	return &Api{AuthToken: authToken, BaseURL: defaultAPIURL}
 }
 
 func (a *Api) Echo() (*EchoResponse, error) {
@@ -30,14 +30,14 @@ func (a *Api) Echo() (*EchoResponse, error) {
 
 func (a *Api) CreateHook(input CreateHookInput) (*CreateHookResponse, error) {
 	data := url.Values{}
-	data.Set("url", input.Url)
+	data.Set("url", input.URL)
 
 	for _, ev := range input.Events {
 		data.Add("events[]", ev)
 	}
 
 	var resp CreateHookResponse
-	return &resp, a.request("POST", "/hooks", strings.NewReader(data.Encode()), contentTypeUrlEncoded, &resp)
+	return &resp, a.request("POST", "/hooks", strings.NewReader(data.Encode()), contentTypeURLEncoded, &resp)
 }
 
 func (a *Api) GetHook(input GetHookInput) (*GetHookResponse, error) {
@@ -60,13 +60,13 @@ func (a *Api) Me() (*MeResponse, error) {
 	return &resp, a.request("GET", "/users/me", nil, "", &resp)
 }
 
-func (a *Api) EventTypes() (*EventTypesResponse, error) {
+func (a *Api) GetEventTypes() (*EventTypesResponse, error) {
 	var resp EventTypesResponse
 	return &resp, a.request("GET", "/users/me/event_types", nil, "", &resp)
 }
 
 func (a *Api) request(method string, path string, body io.Reader, contentType string, out interface{}) error {
-	req, err := http.NewRequest(method, a.BaseUrl+path, body)
+	req, err := http.NewRequest(method, a.BaseURL+path, body)
 	if err != nil {
 		return err
 	}

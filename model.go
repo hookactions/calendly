@@ -46,7 +46,7 @@ type CreateHookResponse struct {
 }
 
 type CreateHookInput struct {
-	Url    string
+	URL    string
 	Events []string
 }
 
@@ -125,7 +125,7 @@ type eventTypeAttributes struct {
 type EventTypesResponse struct {
 	BasicResponse
 
-	Data struct {
+	Data []struct {
 		Id         string              `json:"id"`
 		Type       string              `json:"type"`
 		Attributes eventTypeAttributes `json:"attributes"`

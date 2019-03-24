@@ -55,7 +55,7 @@ func TestBasicResponse_Err(t *testing.T) {
 	server := testApiServer(t, "123")
 	defer server.Close()
 
-	api := &Api{BaseUrl: server.URL, AuthToken: "foo"}
+	api := &Api{BaseURL: server.URL, AuthToken: "foo"}
 	resp, err := api.Echo()
 	require.NoError(t, err)
 
@@ -68,7 +68,7 @@ func TestApi_Echo(t *testing.T) {
 	server := testApiServer(t, "123")
 	defer server.Close()
 
-	api := &Api{BaseUrl: server.URL, AuthToken: "123"}
+	api := &Api{BaseURL: server.URL, AuthToken: "123"}
 	resp, err := api.Echo()
 	require.NoError(t, err)
 
@@ -79,8 +79,8 @@ func TestApi_CreateHook(t *testing.T) {
 	server := testApiServer(t, "123")
 	defer server.Close()
 
-	api := &Api{BaseUrl: server.URL, AuthToken: "123"}
-	input := CreateHookInput{Url: "https://example.com", Events: []string{"invitee.created", "invitee.canceled"}}
+	api := &Api{BaseURL: server.URL, AuthToken: "123"}
+	input := CreateHookInput{URL: "https://example.com", Events: []string{"invitee.created", "invitee.canceled"}}
 	resp, err := api.CreateHook(input)
 	require.NoError(t, err)
 
