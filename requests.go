@@ -60,6 +60,11 @@ func (a *Api) Me() (*MeResponse, error) {
 	return &resp, a.request("GET", "/users/me", nil, "", &resp)
 }
 
+func (a *Api) EventTypes() (*EventTypesResponse, error) {
+	var resp EventTypesResponse
+	return &resp, a.request("GET", "/users/me/event_types", nil, "", &resp)
+}
+
 func (a *Api) request(method string, path string, body io.Reader, contentType string, out interface{}) error {
 	req, err := http.NewRequest(method, a.BaseUrl+path, body)
 	if err != nil {

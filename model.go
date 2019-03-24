@@ -6,8 +6,6 @@ import (
 	"time"
 )
 
-type Attributes map[string]interface{}
-
 type BasicResponse struct {
 	Status  int    `json:"status,omitempty"`
 	Type    string `json:"type,omitempty"`
@@ -56,10 +54,17 @@ type GetHookInput struct {
 	Id string
 }
 
+type hookAttributes struct {
+	URL       string    `json:"url"`
+	CreatedAt time.Time `json:"created_at"`
+	State     string    `json:"state"`
+	Events    []string  `json:"events"`
+}
+
 type hook struct {
-	Id         string     `json:"id"`
-	Type       string     `json:"type"`
-	Attributes Attributes `json:"attributes"`
+	Id         string         `json:"id"`
+	Type       string         `json:"type"`
+	Attributes hookAttributes `json:"attributes"`
 }
 
 type GetHookResponse struct {
@@ -103,5 +108,26 @@ type MeResponse struct {
 		Id         string         `json:"id"`
 		Type       string         `json:"type"`
 		Attributes userAttributes `json:"attributes"`
+	} `json:"data"`
+}
+
+type eventTypeAttributes struct {
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Slug        string    `json:"slug"`
+	Color       string    `json:"color"`
+	Active      bool      `json:"active"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	URL         string    `json:"url"`
+}
+
+type EventTypesResponse struct {
+	BasicResponse
+
+	Data struct {
+		Id         string              `json:"id"`
+		Type       string              `json:"type"`
+		Attributes eventTypeAttributes `json:"attributes"`
 	} `json:"data"`
 }
