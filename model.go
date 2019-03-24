@@ -42,7 +42,7 @@ type EchoResponse struct {
 type CreateHookResponse struct {
 	BasicResponse
 
-	Id string `json:"id"`
+	Id int `json:"id"`
 }
 
 type CreateHookInput struct {
@@ -62,7 +62,7 @@ type hookAttributes struct {
 }
 
 type hook struct {
-	Id         string         `json:"id"`
+	Id         int            `json:"id"`
 	Type       string         `json:"type"`
 	Attributes hookAttributes `json:"attributes"`
 }
@@ -81,7 +81,7 @@ type GetHooksResponse struct {
 }
 
 type DeleteHookInput struct {
-	Id string
+	Id int
 }
 
 type DeleteHookResponse struct {

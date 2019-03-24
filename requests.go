@@ -52,7 +52,7 @@ func (a *Api) GetHooks() (*GetHooksResponse, error) {
 
 func (a *Api) DeleteHook(input DeleteHookInput) (*DeleteHookResponse, error) {
 	var resp DeleteHookResponse
-	return &resp, a.request("DELETE", fmt.Sprintf("/hooks/%s", input.Id), nil, "", &resp)
+	return &resp, a.request("DELETE", fmt.Sprintf("/hooks/%d", input.Id), nil, "", &resp)
 }
 
 func (a *Api) Me() (*MeResponse, error) {
