@@ -15,7 +15,7 @@ type BasicResponse struct {
 }
 
 func (r *BasicResponse) Err() error {
-	if r.Status != 200 {
+	if r.Status != 0 && r.Status != 200 {
 		return fmt.Errorf(r.Message)
 	}
 	return nil

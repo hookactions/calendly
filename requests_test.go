@@ -149,6 +149,18 @@ func testApiServer(t *testing.T, apiToken string) *httptest.Server {
 				assert.NoError(t, err)
 				return
 			}
+		case "/hooks/123":
+			if r.Method == "DELETE" {
+				_, err := w.Write([]byte(deleteHookData))
+				assert.NoError(t, err)
+				return
+			}
+		case "/users/me":
+			if r.Method == "GET" {
+				_, err := w.Write([]byte(meData))
+				assert.NoError(t, err)
+				return
+			}
 		}
 		http.NotFound(w, r)
 	}))
@@ -201,7 +213,7 @@ func TestApi_GetHooks(t *testing.T) {
 
 	assert.Len(t, resp.Data, 2)
 
-	assert.Equal(t, resp.Data[0], hook{
+	assert.Equal(t, hook{
 		Type: "hooks",
 		Id:   12345,
 		Attributes: hookAttributes{
@@ -210,8 +222,8 @@ func TestApi_GetHooks(t *testing.T) {
 			State:     "active",
 			Events:    []string{"invitee.created", "invitee.canceled"},
 		},
-	})
-	assert.Equal(t, resp.Data[1], hook{
+	}, resp.Data[0])
+	assert.Equal(t, hook{
 		Type: "hooks",
 		Id:   1234,
 		Attributes: hookAttributes{
@@ -220,5 +232,43 @@ func TestApi_GetHooks(t *testing.T) {
 			State:     "disabled",
 			Events:    []string{"invitee.created"},
 		},
-	})
+	}, resp.Data[1])
+}
+
+func TestApi_DeleteHook(t *testing.T) {
+	server := testApiServer(t, "123")
+	defer server.Close()
+
+	api := &Api{BaseURL: server.URL, AuthToken: "123"}
+
+	resp, err := api.DeleteHook(DeleteHookInput{Id: 123})
+	require.NoError(t, err)
+
+	assert.NoError(t, resp.Err())
+}
+
+func TestApi_Me(t *testing.T) {
+	server := testApiServer(t, "123")
+	defer server.Close()
+
+	api := &Api{BaseURL: server.URL, AuthToken: "123"}
+
+	resp, err := api.Me()
+	require.NoError(t, err)
+
+	expected := &MeResponse{}
+	expected.Data.Id = "XXXXXXXXXXXXXXXX"
+	expected.Data.Type = "users"
+	expected.Data.Attributes = userAttributes{
+		Name:      "Jane Doe",
+		Slug:      "janedoe",
+		Email:     "janedoe30305@gmail.com",
+		URL:       "https://calendly.com/janedoe",
+		Timezone:  "America/New_York",
+		CreatedAt: time.Date(2015, 6, 16, 18, 46, 52, 0, time.UTC),
+		UpdatedAt: time.Date(2016, 8, 23, 19, 40, 7, 0, time.UTC),
+	}
+	expected.Data.Attributes.Avatar.URL = "https://d3v0px0pttie1i.cloudfront.net/uploads/user/avatar/68272/78fb9f5e.jpg"
+
+	assert.Equal(t, expected, resp)
 }
