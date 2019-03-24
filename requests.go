@@ -2,6 +2,7 @@ package calendly
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -19,7 +20,7 @@ type Api struct {
 }
 
 func New(authToken string) *Api {
-	return &Api{AuthToken:authToken, BaseUrl: defaultAPIURL}
+	return &Api{AuthToken: authToken, BaseUrl: defaultAPIURL}
 }
 
 func (a *Api) Echo() (*EchoResponse, error) {
@@ -37,6 +38,26 @@ func (a *Api) CreateHook(input CreateHookInput) (*CreateHookResponse, error) {
 
 	var resp CreateHookResponse
 	return &resp, a.request("POST", "/hooks", strings.NewReader(data.Encode()), contentTypeUrlEncoded, &resp)
+}
+
+func (a *Api) GetHook(input GetHookInput) (*GetHookResponse, error) {
+	var resp GetHookResponse
+	return &resp, a.request("GET", fmt.Sprintf("/hooks/%s", input.Id), nil, "", &resp)
+}
+
+func (a *Api) GetHooks() (*GetHooksResponse, error) {
+	var resp GetHooksResponse
+	return &resp, a.request("GET", "/hooks", nil, "", &resp)
+}
+
+func (a *Api) DeleteHook(input DeleteHookInput) (*DeleteHookResponse, error) {
+	var resp DeleteHookResponse
+	return &resp, a.request("DELETE", fmt.Sprintf("/hooks/%s", input.Id), nil, "", &resp)
+}
+
+func (a *Api) Me() (*MeResponse, error) {
+	var resp MeResponse
+	return &resp, a.request("GET", "/users/me", nil, "", &resp)
 }
 
 func (a *Api) request(method string, path string, body io.Reader, contentType string, out interface{}) error {
