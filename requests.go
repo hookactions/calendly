@@ -25,7 +25,7 @@ func New(authToken string) *Api {
 
 func (a *Api) Echo() (*EchoResponse, error) {
 	var resp EchoResponse
-	return &resp, a.request("GET", "/echo", nil, "", &resp)
+	return &resp, a.request("GET", "/echo", nil, "", &resp, nil)
 }
 
 func (a *Api) CreateHook(input CreateHookInput) (*CreateHookResponse, error) {
@@ -37,35 +37,41 @@ func (a *Api) CreateHook(input CreateHookInput) (*CreateHookResponse, error) {
 	}
 
 	var resp CreateHookResponse
-	return &resp, a.request("POST", "/hooks", strings.NewReader(data.Encode()), contentTypeURLEncoded, &resp)
+	return &resp, a.request("POST", "/hooks", strings.NewReader(data.Encode()), contentTypeURLEncoded, &resp, nil)
 }
 
 func (a *Api) GetHook(input GetHookInput) (*GetHookResponse, error) {
 	var resp GetHookResponse
-	return &resp, a.request("GET", fmt.Sprintf("/hooks/%s", input.Id), nil, "", &resp)
+	return &resp, a.request("GET", fmt.Sprintf("/hooks/%s", input.Id), nil, "", &resp, nil)
 }
 
 func (a *Api) GetHooks() (*GetHooksResponse, error) {
 	var resp GetHooksResponse
-	return &resp, a.request("GET", "/hooks", nil, "", &resp)
+	return &resp, a.request("GET", "/hooks", nil, "", &resp, nil)
 }
 
 func (a *Api) DeleteHook(input DeleteHookInput) (*DeleteHookResponse, error) {
 	var resp DeleteHookResponse
-	return &resp, a.request("DELETE", fmt.Sprintf("/hooks/%d", input.Id), nil, "", &resp)
+	return &resp, a.request("DELETE", fmt.Sprintf("/hooks/%d", input.Id), nil, "", &resp, nil)
 }
 
 func (a *Api) Me() (*MeResponse, error) {
 	var resp MeResponse
-	return &resp, a.request("GET", "/users/me", nil, "", &resp)
+	return &resp, a.request("GET", "/users/me", nil, "", &resp, nil)
 }
 
-func (a *Api) GetEventTypes() (*EventTypesResponse, error) {
+func (a *Api) GetEventTypes(input *GetEventTypesInput) (*EventTypesResponse, error) {
+	var params map[string]string
+
+	if input != nil {
+		params = map[string]string{"include": input.Include}
+	}
+
 	var resp EventTypesResponse
-	return &resp, a.request("GET", "/users/me/event_types", nil, "", &resp)
+	return &resp, a.request("GET", "/users/me/event_types", nil, "", &resp, params)
 }
 
-func (a *Api) request(method string, path string, body io.Reader, contentType string, out interface{}) error {
+func (a *Api) request(method string, path string, body io.Reader, contentType string, out interface{}, queryParams map[string]string) error {
 	req, err := http.NewRequest(method, a.BaseURL+path, body)
 	if err != nil {
 		return err
@@ -75,6 +81,16 @@ func (a *Api) request(method string, path string, body io.Reader, contentType st
 
 	if contentType != "" {
 		req.Header.Set("Content-Type", contentType)
+	}
+
+	if queryParams != nil {
+		q := req.URL.Query()
+
+		for k, v := range queryParams {
+			q.Set(k, v)
+		}
+
+		req.URL.RawQuery = q.Encode()
 	}
 
 	resp, err := http.DefaultClient.Do(req)

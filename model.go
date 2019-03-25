@@ -89,11 +89,11 @@ type DeleteHookResponse struct {
 }
 
 type userAttributes struct {
-	Name     string `json:"name"`
-	Slug     string `json:"slug"`
-	Email    string `json:"email"`
-	URL      string `json:"url"`
-	Timezone string `json:"timezone"`
+	Name     string  `json:"name"`
+	Slug     string  `json:"slug"`
+	Email    *string `json:"email"`
+	URL      string  `json:"url"`
+	Timezone string  `json:"timezone"`
 	Avatar   struct {
 		URL string `json:"url"`
 	} `json:"avatar"`
@@ -111,9 +111,14 @@ type MeResponse struct {
 	} `json:"data"`
 }
 
+type GetEventTypesInput struct {
+	Include string
+}
+
 type eventTypeAttributes struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
+	Duration    int       `json:"duration"`
 	Slug        string    `json:"slug"`
 	Color       string    `json:"color"`
 	Active      bool      `json:"active"`
@@ -122,12 +127,28 @@ type eventTypeAttributes struct {
 	URL         string    `json:"url"`
 }
 
+type eventTypeRelationship struct {
+	Owner struct {
+		Data struct {
+			Type string `json:"type"`
+			Id   string `json:"id"`
+		} `json:"data"`
+	} `json:"owner"`
+}
+
 type EventTypesResponse struct {
 	BasicResponse
 
 	Data []struct {
-		Id         string              `json:"id"`
-		Type       string              `json:"type"`
-		Attributes eventTypeAttributes `json:"attributes"`
+		Id            string                 `json:"id"`
+		Type          string                 `json:"type"`
+		Attributes    eventTypeAttributes    `json:"attributes"`
+		Relationships *eventTypeRelationship `json:"relationships,omitempty"`
 	} `json:"data"`
+
+	Included []struct {
+		Id         string         `json:"id"`
+		Type       string         `json:"type"`
+		Attributes userAttributes `json:"attributes"`
+	} `json:"included,omitempty"`
 }
