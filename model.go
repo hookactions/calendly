@@ -51,7 +51,7 @@ type CreateHookInput struct {
 }
 
 type GetHookInput struct {
-	Id string
+	Id int
 }
 
 type hookAttributes struct {

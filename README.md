@@ -29,10 +29,10 @@ func main() {
 		URL: "https://foo.bar/my-hook",
 		Events: []string{"invitee.created", "invitee.canceled"},
 	})
-	fmt.Printf("Created hook with id: %s\n", createResp.Id)
+	fmt.Printf("Created hook with id: %d\n", createResp.Id)
 	
 	// 3. Get webhook by id
-	getResp, _ := api.GetHook(calendly.GetHookInput{Id: "1"})
+	getResp, _ := api.GetHook(calendly.GetHookInput{Id: 1})
 	fmt.Printf("Got hook, state is: %s\n", getResp.Data[0].Attributes.State)
 	
 	// 4. Get all webhooks
@@ -40,11 +40,11 @@ func main() {
 	fmt.Printf("Got %d hooks\n", len(listResp.Data))
 	
 	// 5. Delete webhook
-	api.DeleteHook(calendly.DeleteHookInput{Id: "1"})
+	api.DeleteHook(calendly.DeleteHookInput{Id: 1})
 	fmt.Println("deleted")
 	
 	// 6. Get user event types
-	eventTypes, _ := api.GetEventTypes()
+	eventTypes, _ := api.GetEventTypes(nil)
 	fmt.Printf("Got %d event types\n", len(eventTypes.Data))
 	
 	// 7. Get current user data

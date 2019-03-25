@@ -42,7 +42,7 @@ func (a *Api) CreateHook(input CreateHookInput) (*CreateHookResponse, error) {
 
 func (a *Api) GetHook(input GetHookInput) (*GetHookResponse, error) {
 	var resp GetHookResponse
-	return &resp, a.request("GET", fmt.Sprintf("/hooks/%s", input.Id), nil, &resp)
+	return &resp, a.request("GET", fmt.Sprintf("/hooks/%d", input.Id), nil, &resp)
 }
 
 func (a *Api) GetHooks() (*GetHooksResponse, error) {
