@@ -489,5 +489,21 @@ func TestApi_GetEventTypes(t *testing.T) {
 }
 
 func TestApi_GetHook(t *testing.T) {
-	t.SkipNow() // todo
+	server := testApiServer(t, "123")
+	defer server.Close()
+
+	api := &Api{BaseURL: server.URL, AuthToken: "123"}
+	resp, err := api.GetHook(GetHookInput{Id: 123})
+	require.NoError(t, err)
+
+	assert.Equal(t, hook{
+		Id:   12345,
+		Type: "hooks",
+		Attributes: hookAttributes{
+			URL:       "http://foo.bar/1",
+			CreatedAt: time.Date(2016, 8, 23, 19, 15, 24, 0, time.UTC),
+			State:     "active",
+			Events:    []string{"invitee.created", "invitee.canceled"},
+		},
+	}, resp.Data[0])
 }
